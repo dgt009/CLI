@@ -1,5 +1,12 @@
+import java.io.IOException;
 import java.util.Date;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Filter;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import org.apache.commons.cli.BasicParser;
@@ -31,13 +38,34 @@ public class CLI {
 	private String[] args =null;
 	private Options options = new Options();	
 	private static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
-
 	
-	public CLI(String args[]){
+	
+	public CLI(String args[]) throws SecurityException, IOException{
 		
-		LOGGER.setLevel(Level.INFO);
-		LOGGER.info("info message from " + CLI.class.getName());
+//		to add logging.properties file......
 		
+		
+		LogManager logMan=LogManager.getLogManager();
+		logMan.readConfiguration(Thread.currentThread().getClass().getResourceAsStream("/logging.properties"));
+
+		
+//		LOGGER.setLevel(Level.ALL);// filtering
+//		LOGGER.info("info message from " + CLI.class.getName());
+	
+		// adding handlers to logrecord
+//		LOGGER.addHandler(new FileHandler());
+	
+	
+	
+	//filtering the logs
+//	LOGGER.setFilter(new Filter() {
+//		
+//		public boolean isLoggable(LogRecord arg0) {
+//			// TODO Auto-generated method stub
+//			return false;
+//		}
+//	});
+	
 		this.args=args;
 		
 		options.addOption(OptionBuilder.withArgName("param1> <param2").withValueSeparator(' ').hasArgs(2).create('s'));
@@ -52,7 +80,8 @@ public class CLI {
 	
 	
 	public void parse(){
-		
+	
+		LOGGER.entering(getClass().getName(),"parse()");
 		CommandLineParser parser = new BasicParser();
 		CommandLine commandLine = null;
 		
@@ -95,7 +124,7 @@ public class CLI {
 				time();
 			}
 			
-			
+			LOGGER.exiting(getClass().getName(),"parse()");
 			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -110,25 +139,33 @@ public class CLI {
 
 	private void time() {
 		// TODO Auto-generated method stub
+
+		LOGGER.entering(getClass().getName(),"time()");
 		System.out.println("time...."+ new Date());
+		LOGGER.exiting(getClass().getName(),"time()");
 	}
 
 
 	private void help() {
+
+		LOGGER.entering(getClass().getName(),"help()");
 		System.out.println("helpping out....wait :D");
-		
+		LOGGER.exiting(getClass().getName(),"help()");
 	}
 
 
 	private void mul(int i, int j) {
-		// TODO Auto-generated method stub
+
+		LOGGER.entering(getClass().getName(),"mul()");
 		System.out.println("Answer  " + (i*j));
+		LOGGER.exiting(getClass().getName(),"mul()");
 
 	}
 
 
 	private void div(int i, int j) {
-		// TODO Auto-generated method stub
+
+		LOGGER.entering(getClass().getName(),"div()");
 		if(j!=0){
 		System.out.println("Answer  " + i/j);
 		}
@@ -137,19 +174,27 @@ public class CLI {
 			LOGGER.log(Level.SEVERE, "Denominater is 0, try changing paramter");
 			System.out.println("cant divide by 0");
 		}
+		
+		LOGGER.exiting(getClass().getName(),"div()");
+
 		}
 
 
 	private void sub(int i, int j) {
-		// TODO Auto-generated method stub
+
+		LOGGER.entering(getClass().getName(),"sub()");
 		System.out.println("Answer  " + (i-j));
+		LOGGER.exiting(getClass().getName(),"sub()");
 
 	}
 
 
 	private void add(int i, int j) {
+
+		LOGGER.entering(getClass().getName(),"add()");
 		System.out.println("Answer  " + (i+j));
-		
+		LOGGER.exiting(getClass().getName(),"add()");
+
 		
 	}
 	
