@@ -1,0 +1,4 @@
+Sep 24, 2015 11:34:30 AM CLI parse
+INFO: Using cli argument -d=
+Sep 24, 2015 11:34:30 AM CLI div
+SEVERE: Denominater is 0, try changing paramter

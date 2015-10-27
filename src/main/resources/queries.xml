@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="createTable">
+
+	drop table if exists ais_in_shipyard;
+	
+	create table ais_in_shipyard(
+		ais_id serial primary key,
+		position geometry(Point),
+		ts timestamp with time zone,
+		imo integer,
+		vessel_name text
+	);
+	
+	CREATE INDEX ais_position_gix ON ais_in_shipyard USING GIST (position);
+</entry>
+
+<entry key="insertAisPositions">
+	insert into ais_in_shipyard(
+								position,
+								ts,
+								imo,
+								vessel_name
+								)
+								values (st_geomfromtext(?),?,?,?);
+
+</entry>
+
+
+<entry key="getAisPositions">
+				SELECT 
+						v.imo,
+						v.vessel_name,
+						p.lons,
+						p.lats,
+						p.timestamps
+				FROM positions_batch p,
+				 	 vessels v
+				WHERE date_part('month',start_time) = 3
+				  and v.imo = p.imo limit 100000;
+
+</entry>
+
+
+<entry key="getShipyardsAndVesselsData">
+				SELECT a.vessel_name,
+					   s.name as shipyard_name
+  				FROM ais_in_shipyard a INNER JOIN shipyards_polygons  s
+  				ON ST_covers(s.polygon,a.position)
+  				group by s.name,a.vessel_name
+  				order by shipyard_name;
+</entry>
+
+
+<entry key="getShipyardswithoutVessels">
+				select name as shipyard_name 
+				from shipyards_polygons 
+				where name not in (
+									SELECT distinct s.name
+  									FROM ais_in_shipyard a INNER JOIN shipyards_polygons  s
+  									ON ST_covers(s.polygon,a.position)
+  									group by s.name
+  								);
+</entry>
+
+</properties>
